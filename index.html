@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Patowari vs Abbas</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<audio id="bgMusic" loop>
+    <source src="audio/music.mp3" type="audio/mpeg">
+</audio>
+<audio id="bgMusic" loop>
+    <source src="audio/music.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="heartbeat">
+    <source src="audio/heartbeat.mp3" type="audio/mpeg">
+</audio>
+<audio id="heartbeat" src="audio/heartbeat.mp3" loop></audio>
+
+<body>
+    <!-- Main Menu Screen -->
+    <div id="menuScreen" class="screen active">
+        <div class="menu-container">
+            <div class="game-logo">
+                <h1 class="game-title">Patowari vs Abbas</h1>
+                <p class="game-tagline">নেতা কে রক্ষা করুন</p>
+            </div>
+
+            <div class="menu-buttons">
+                <button id="startBtn" class="btn btn-primary">
+                    <span class="btn-icon">🎮</span>
+                    <span>খেলা শুরু করুন</span>
+                </button>
+                <button id="howToPlayBtn" class="btn btn-secondary">
+                    <span class="btn-icon">📖</span>
+                    <span>কিভাবে খেলবেন</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- How to Play Screen -->
+    <div id="howToPlayScreen" class="screen">
+        <div class="modal-container">
+            <h2 class="modal-title">কিভাবে খেলবেন? 🎯</h2>
+            <div class="instructions">
+                <div class="instruction-item">
+                    <span class="instruction-icon">🛡️</span>
+                    <span>আব্বাস কে রক্ষা করুন</span>
+                </div>
+                <div class="instruction-item">
+                    <span class="instruction-icon">⚔️</span>
+                    <span>পাটোয়ারী শত্রুরা চারদিক থেকে আসবে</span>
+                </div>
+                <div class="instruction-item">
+                    <span class="instruction-icon">👆</span>
+                    <span>পাটোয়ারী শত্রুতে ক্লিক/ট্যাপ করে থামান</span>
+                </div>
+                <div class="instruction-item">
+                    <span class="instruction-icon">❤️</span>
+                    <span>পাটোয়ারী পৌঁছালে ধৈর্য কমবে</span>
+                </div>
+                <div class="instruction-item">
+                    <span class="instruction-icon">⏱️</span>
+                    <span>সময়ের সাথে কঠিন হবে</span>
+                </div>
+            </div>
+            <button id="backToMenuBtn" class="btn btn-primary">ফিরুন</button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="screen">
+        <!-- Top HUD -->
+        <div class="game-hud">
+            <div class="hud-left">
+                <div class="hud-card">
+                    <div class="hud-label">স্কোর</div>
+                    <div id="scoreDisplay" class="hud-value">0</div>
+                </div>
+            </div>
+            <div class="hud-center">
+                <div class="hud-card">
+                    <div class="hud-label">সময়</div>
+                    <div id="timerDisplay" class="hud-value">0s</div>
+                </div>
+            </div>
+            <div class="hud-right">
+                <div class="hud-card">
+                    <div class="hud-label">তরঙ্গ</div>
+                    <div id="waveDisplay" class="hud-value">1</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Health Bar -->
+        <div class="health-container">
+            <div class="health-info">
+                <span class="health-label">আব্বাসের ধৈর্য</span>
+                <span id="healthText" class="health-value">100</span>
+            </div>
+            <div class="health-bar-wrapper">
+                <div id="healthBar" class="health-bar"></div>
+            </div>
+        </div>
+
+        <!-- Game Canvas -->
+        <div id="gameCanvas" class="game-canvas">
+            <!-- Abbas (Leader) in center -->
+            <div id="abbas" class="abbas">
+                <img id="abbasImg" src="images/abbas.png" alt="Abbas" class="character-img">
+                <div class="character-label">Abbas</div>
+            </div>
+
+            <!-- Enemies will spawn here -->
+            <div id="enemyContainer"></div>
+
+            <!-- Effects container -->
+            <div id="effectsContainer"></div>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="followPopup" class="follow-popup">
+        <div class="follow-box">
+            <h3>আমাকে Follow করুন</h3>
+            <p>আরো মজার গেম ও আপডেট পেতে Facebook Follow করুন</p>
+
+            <a href="https://www.facebook.com/Sayem1271/" target="_blank" class="follow-btn">
+                Follow on Facebook
+            </a>
+
+            <button onclick="closeFollowPopup()" class="close-btn">Close</button>
+        </div>
+    </div>
+
+    <div id="gameOverScreen" class="screen">
+        <div class="gameover-container">
+            <div class="gameover-icon">💔</div>
+            <h1 class="gameover-title">খেলা শেষ!</h1>
+
+            <div class="result-card">
+                <p class="result-label">আপনি নেতা কে রক্ষা করেছেন:</p>
+                <p class="result-value"><span id="finalScore">0</span> বার</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-label">সময়</div>
+                    <div id="finalTime" class="stat-value">0s</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🌊</div>
+                    <div class="stat-label">তরঙ্গ</div>
+                    <div id="finalWave" class="stat-value">1</div>
+                </div>
+            </div>
+
+            <div class="gameover-buttons">
+                <button id="restartBtn" class="btn btn-primary">
+                    <span class="btn-icon">🔄</span>
+                    <span>আবার খেলুন</span>
+                </button>
+                <button id="menuBtn" class="btn btn-secondary">
+                    <span class="btn-icon">🏠</span>
+                    <span>মেনুতে ফিরুন</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/game.js"></script>
+</body>
+
+</html>
