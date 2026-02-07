@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>পাটোয়ারী vs আব্বাস</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="preload" as="image" href="images/abbas.png">
+    <link rel="preload" as="image" href="images/patowari.png">
+    <link rel="preload" as="image" href="images/angry.png">
+    <link rel="preload" as="audio" href="audio/music.mp3">
+    <link rel="manifest" href="manifest.json">
     <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <audio id="bgMusic" loop>
@@ -63,7 +68,7 @@
                 </div>
                 <div class="instruction-item">
                     <span class="instruction-icon">❤️</span>
-                    <span>পাটোয়ারী কাছে আসলে ধৈর্য সীমা কমবে</span>
+                    <span>পাটোয়ারী কাছে আসলে নেতা রেগে যাবেন।</span>
                 </div>
                 <div class="instruction-item">
                     <span class="instruction-icon">⏱️</span>
@@ -114,7 +119,7 @@
             <!-- Abbas (Leader) in center -->
             <div id="abbas" class="abbas">
                 <img id="abbasImg" src="images/abbas.png" alt="Abbas" class="character-img">
-                <div class="character-label">Abbas</div>
+                <div class="character-label">নেতা আব্বাস</div>
             </div>
 
             <!-- Enemies will spawn here -->
@@ -176,6 +181,15 @@
     </div>
 
     <script src="js/game.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((reg) => console.log('Service Worker registered', reg))
+                    .catch((err) => console.log('Service Worker failed', err));
+            });
+        }
+    </script>
 </body>
 
 </html>

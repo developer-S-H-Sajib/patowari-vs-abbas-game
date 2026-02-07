@@ -469,14 +469,11 @@ body {
     transform: translate(-50%, -50%);
     width: 140px;
     height: 140px;
-    border-radius: 50%;
-    overflow: hidden;
     z-index: 50;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
-    /* background clean রাখবে */
+    background: transparent;
     animation: leaderFloat 3s ease-in-out infinite;
 }
 
@@ -506,10 +503,13 @@ body {
 }
 
 .abbas img {
-    max-width: 85%;
-    max-height: 85%;
-    object-fit: contain;
+    will-change: transform;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     object-position: center;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .character-label {

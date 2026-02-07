@@ -39,7 +39,8 @@ const gameState = {
         spawn: null,
         difficulty: null,
         game: null
-    }
+    },
+    canvas: { width: 0, height: 0, left: 0, top: 0, centerX: 0, centerY: 0 } // Cache canvas dims
 };
 
 // ===================================
@@ -222,6 +223,11 @@ function shakeScreen() {
  * @returns {number} Distance in pixels
  */
 function getDistance(elem1, elem2) {
+    // Optimization: Use cached center for Abbas (elem1 is always Abbas)
+    // For enemy (elem2), we can use its x,y properties if available, but let's keep it simple for now
+    // or better, if we have x/y in the object, use that.
+
+    // Fallback to rect if needed, but for game loop speed, we should rely on state coordinates
     const rect1 = elem1.getBoundingClientRect();
     const rect2 = elem2.getBoundingClientRect();
 
@@ -247,7 +253,12 @@ function updateAngryMode() {
         const enemy = gameState.enemies[i];
 
         if (enemy.alive) {
-            const distance = getDistance(elements.abbas, enemy.element);
+            // Optimization: Use coordinate distance if possible to avoid layout thrashing
+            // Abbas is at center of canvas
+            // Enemy is 80x80, so center is x+40, y+40
+            const dx = (enemy.x + 40) - (gameState.canvas.width / 2);
+            const dy = (enemy.y + 40) - (gameState.canvas.height / 2);
+            const distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance < CONFIG.ANGRY_DISTANCE_THRESHOLD) {
                 shouldBeAngry = true;
@@ -336,39 +347,50 @@ class Enemy {
         this.element = document.createElement('div');
         this.element.className = 'enemy';
 
+        // Randomly select one image
+        const enemyImages = [
+            "images/patowari.png",
+            "images/patowari2.png",
+            "images/patowari3.png"
+        ];
+        const randomImage = enemyImages[Math.floor(Math.random() * enemyImages.length)];
+
         // Create enemy HTML
         this.element.innerHTML = `
-            <img src="${CONFIG.IMAGES.patowari}" alt="Patowari" class="character-img"
+            <img src="${randomImage}" alt="Patowari" class="character-img"
             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%23e74c3c%22/%3E%3C/svg%3E'">
-            <div class="character-label">Patowari</div>
+            <div class="character-label">পাটওয়ারী</div>
         `;
 
         // Random spawn position from edges
-        const canvas = elements.gameCanvas.getBoundingClientRect();
+        // Random spawn position from edges
+        // Use cached canvas dimensions
+        const width = gameState.canvas.width;
+        const height = gameState.canvas.height;
         const edge = Math.floor(Math.random() * 4);
 
         switch (edge) {
             case 0: // top
-                this.x = Math.random() * canvas.width;
+                this.x = Math.random() * width;
                 this.y = -60;
                 break;
             case 1: // right
-                this.x = canvas.width + 60;
-                this.y = Math.random() * canvas.height;
+                this.x = width + 60;
+                this.y = Math.random() * height;
                 break;
             case 2: // bottom
-                this.x = Math.random() * canvas.width;
-                this.y = canvas.height + 60;
+                this.x = Math.random() * width;
+                this.y = height + 60;
                 break;
             case 3: // left
                 this.x = -60;
-                this.y = Math.random() * canvas.height;
+                this.y = Math.random() * height;
                 break;
         }
 
         // Calculate direction to Abbas (center)
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
+        const centerX = width / 2;
+        const centerY = height / 2;
         const angle = Math.atan2(centerY - this.y, centerX - this.x);
 
         this.vx = Math.cos(angle) * gameState.enemySpeed;
@@ -403,9 +425,10 @@ class Enemy {
         this.element.style.top = this.y + 'px';
 
         // Collision check with Abbas
-        const canvas = elements.gameCanvas.getBoundingClientRect();
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
+        // Collision check with Abbas
+        // Use cached center
+        const centerX = gameState.canvas.width / 2;
+        const centerY = gameState.canvas.height / 2;
 
         const distance = Math.sqrt(
             Math.pow(this.x - centerX, 2) +
@@ -588,13 +611,25 @@ function startGame() {
     gameState.timers.difficulty = setInterval(increaseDifficulty, CONFIG.DIFFICULTY_INTERVAL);
 
     // Start spawning and game loop
+    // Start spawning and game loop
     startSpawning();
+    updateCanvasSize(); // Initial size update
     gameState.animationFrame = requestAnimationFrame(gameLoop);
     if (elements.bgMusic) {
         elements.bgMusic.volume = 0.4;
         elements.bgMusic.play().catch(() => { });
     }
 
+}
+
+function updateCanvasSize() {
+    const rect = elements.gameCanvas.getBoundingClientRect();
+    gameState.canvas.width = rect.width;
+    gameState.canvas.height = rect.height;
+    gameState.canvas.left = rect.left;
+    gameState.canvas.top = rect.top;
+    gameState.canvas.centerX = rect.width / 2;
+    gameState.canvas.centerY = rect.height / 2;
 }
 
 function endGame() {
@@ -663,6 +698,11 @@ function initEvents() {
     elements.gameCanvas.addEventListener('touchmove', (e) => {
         e.preventDefault();
     }, { passive: false });
+
+    // Window resize listener for optimization
+    window.addEventListener('resize', () => {
+        updateCanvasSize();
+    });
 }
 
 // ===================================
