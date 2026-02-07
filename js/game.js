@@ -54,6 +54,12 @@ const elements = {
     bgMusic: document.getElementById('bgMusic'),
     heartbeat: document.getElementById('heartbeat'),
     followPopup: document.getElementById('followPopup'),
+    hahaSound: document.getElementById('hahaSound'),
+    abbasVoice: document.getElementById('abbasVoice'),
+    finalScore: document.getElementById('finalScore'),
+    finalTime: document.getElementById('finalTime'),
+    finalWave: document.getElementById('finalWave'),
+
 
 
 
@@ -77,9 +83,7 @@ const elements = {
     gameCanvas: document.getElementById('gameCanvas'),
 
     // Game over
-    finalScore: document.getElementById('finalScore'),
-    finalTime: document.getElementById('finalTime'),
-    finalWave: document.getElementById('finalWave'),
+    // Game over: Handled above (duplicates removed)
     restartBtn: document.getElementById('restartBtn'),
     menuBtn: document.getElementById('menuBtn')
 };
@@ -334,8 +338,8 @@ class Enemy {
 
         // Create enemy HTML
         this.element.innerHTML = `
-            <img src="${CONFIG.IMAGES.patowari}" alt="Patowari" class="character-img" 
-                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%23e74c3c%22/%3E%3C/svg%3E'">
+            <img src="${CONFIG.IMAGES.patowari}" alt="Patowari" class="character-img"
+            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%23e74c3c%22/%3E%3C/svg%3E'">
             <div class="character-label">Patowari</div>
         `;
 
@@ -373,7 +377,7 @@ class Enemy {
         this.element.style.left = this.x + 'px';
         this.element.style.top = this.y + 'px';
 
-        // Event handlers
+        // Click hit
         this.element.addEventListener('click', (e) => {
             e.stopPropagation();
             this.onHit();
@@ -398,10 +402,11 @@ class Enemy {
         this.element.style.left = this.x + 'px';
         this.element.style.top = this.y + 'px';
 
-        // Check collision with Abbas
+        // Collision check with Abbas
         const canvas = elements.gameCanvas.getBoundingClientRect();
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
+
         const distance = Math.sqrt(
             Math.pow(this.x - centerX, 2) +
             Math.pow(this.y - centerY, 2)
@@ -419,18 +424,14 @@ class Enemy {
         if (!this.alive) return;
         this.alive = false;
 
-        // Increase score
         gameState.score++;
         updateScore();
 
-        // Visual effects
         createHitEffect(this.x, this.y);
         createScorePopup(this.x, this.y, 1);
 
-        // Audio
         AudioSystem.playHit();
 
-        // Animate and remove
         this.element.classList.add('hit');
         setTimeout(() => this.remove(), 500);
     }
@@ -444,19 +445,23 @@ class Enemy {
         gameState.health = Math.max(0, gameState.health);
         updateHealth();
 
+        // Haha sound play
+        if (elements.hahaSound) {
+            elements.hahaSound.currentTime = 0;
+            elements.hahaSound.play().catch(() => { });
+        }
+
         // Visual feedback
         elements.abbas.classList.add('damaged');
         setTimeout(() => elements.abbas.classList.remove('damaged'), 300);
 
-        // Screen shake and audio
         shakeScreen();
         AudioSystem.playDamage();
 
-        // Check game over
         if (gameState.health <= 0) {
             endGame();
-            setTimeout(showFollowPopup, 1200);
         }
+
 
         this.remove();
     }
@@ -475,7 +480,7 @@ class Enemy {
 // Enemy Spawning
 // ===================================
 function spawnEnemy() {
-    if (!gameState.isPlaying) return;
+    if (gameState.enemies.length > 12) return;
     const enemy = new Enemy();
     gameState.enemies.push(enemy);
 }
@@ -613,13 +618,26 @@ function endGame() {
         elements.bgMusic.currentTime = 0;
     }
 
-    // Update game over screen
-    elements.finalScore.textContent = gameState.score;
-    elements.finalTime.textContent = gameState.time + 's';
-    elements.finalWave.textContent = gameState.wave;
+    // Abbas voice play after 1 sec (Added from local function)
+    setTimeout(() => {
+        if (elements.abbasVoice) {
+            elements.abbasVoice.currentTime = 0;
+            elements.abbasVoice.play().catch(() => { });
+        }
+    }, 1000);
+
+    // Update game over screen (The FIX: Ensure these update correctly)
+    if (elements.finalScore) elements.finalScore.textContent = gameState.score;
+    if (elements.finalTime) elements.finalTime.textContent = gameState.time + 's';
+    if (elements.finalWave) elements.finalWave.textContent = gameState.wave;
 
     // Show game over screen
     showScreen(elements.gameOverScreen);
+
+    // popup after 1 sec (Added from local function)
+    setTimeout(() => {
+        showFollowPopup();
+    }, 1000);
 }
 
 // ===================================

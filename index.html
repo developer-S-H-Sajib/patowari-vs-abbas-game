@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Patowari vs Abbas</title>
+    <title>পাটোয়ারী vs আব্বাস</title>
     <link rel="stylesheet" href="css/style.css">
+    <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <audio id="bgMusic" loop>
     <source src="audio/music.mp3" type="audio/mpeg">
@@ -18,13 +19,15 @@
     <source src="audio/heartbeat.mp3" type="audio/mpeg">
 </audio>
 <audio id="heartbeat" src="audio/heartbeat.mp3" loop></audio>
+<audio id="hahaSound" src="audio/haha.mp3"></audio>
+<audio id="abbasVoice" src="audio/abbas-sound.mp3"></audio>
 
 <body>
     <!-- Main Menu Screen -->
     <div id="menuScreen" class="screen active">
         <div class="menu-container">
             <div class="game-logo">
-                <h1 class="game-title">Patowari vs Abbas</h1>
+                <h1 class="game-title">পাটোয়ারী vs আব্বাস</h1>
                 <p class="game-tagline">নেতা কে রক্ষা করুন</p>
             </div>
 
@@ -48,7 +51,7 @@
             <div class="instructions">
                 <div class="instruction-item">
                     <span class="instruction-icon">🛡️</span>
-                    <span>আব্বাস কে রক্ষা করুন</span>
+                    <span>আব্বাস নেতা কে রক্ষা করুন</span>
                 </div>
                 <div class="instruction-item">
                     <span class="instruction-icon">⚔️</span>
@@ -60,7 +63,7 @@
                 </div>
                 <div class="instruction-item">
                     <span class="instruction-icon">❤️</span>
-                    <span>পাটোয়ারী পৌঁছালে ধৈর্য কমবে</span>
+                    <span>পাটোয়ারী কাছে আসলে ধৈর্য সীমা কমবে</span>
                 </div>
                 <div class="instruction-item">
                     <span class="instruction-icon">⏱️</span>
@@ -89,8 +92,8 @@
             </div>
             <div class="hud-right">
                 <div class="hud-card">
-                    <div class="hud-label">তরঙ্গ</div>
-                    <div id="waveDisplay" class="hud-value">1</div>
+                    <div class="hud-label">রাগান্বিত</div>
+                    <div id="waveDisplay" class="hud-value">0</div>
                 </div>
             </div>
         </div>
@@ -153,9 +156,9 @@
                     <div id="finalTime" class="stat-value">0s</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">🌊</div>
-                    <div class="stat-label">তরঙ্গ</div>
-                    <div id="finalWave" class="stat-value">1</div>
+                    <div class="stat-icon">🤬</div>
+                    <div class="stat-label">রাগান্বিত হয়েছেন</div>
+                    <div id="finalWave" class="stat-value">0</div>
                 </div>
             </div>
 
